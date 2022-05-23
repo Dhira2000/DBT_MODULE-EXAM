@@ -1,0 +1,129 @@
+**Section 1**
+create database moduleExam;
+USE moduleExam;
+
+-- Section I 
+-- Question 1
+create table DEPT(deptno int,dname varchar(20),loc varchar(15));
+
+DROP TABLE DEPT;
+DROP TABLE EMP;
+
+insert into DEPT values
+(10,'ACCOUNTING','NEW YORK'),
+(20,'RESEARCH','DALLAS'),
+(30,'SALES','CHICAGO'),
+(40,'OPERATIONS','BOSTON')
+;
+
+
+
+
+-- Question 2
+
+
+create table EMP(EMPNO INT,ENAME VARCHAR(20),JOB VARCHAR(15),
+HIREDATE DATE,SAL FLOAT,COMM FLOAT,DEPTNO INT);
+
+INSERT INTO EMP VALUES(7839,'KING','MANAGER','1991-11-17',5000,NULL,10),
+(7698,'BLAKE','CLERK','1981-05-01',2850	,NULL,30),(7782,'CLARK','MANAGER','1981-06-09',2450,NULL,10),
+(7566,'JONES','CLERK','1981-04-02',2975,NULL,20),(7654,'MARTIN','SALESMAN','1981-09-28',1250,1400,30),
+(7499,'ALLEN','SALESMAN','1981-02-20',1600,300,30);
+
+
+-- que3
+select * from EMP where sal between 2500 and 5000;
+
+-- que4
+select ENAME from EMP order by ENAME desc;
+
+-- que5
+select lower(job) from EMP where job = lower(job);
+
+-- que6
+
+select ename,length(ename) from EMP;
+
+-- que7
+select deptno,count(*) from EMP group by DEPTNO;
+
+-- que9
+select ename from EMP where ename like '%AR%';
+
+-- que10
+select sal*0.2 as "HRA" from EMP;
+
+-- que8
+select dname,ename from DEPT,EMP
+where DEPT.deptno = EMP.deptno;
+
+
+
+**Section 2***
+
+Question 1.Write a stored procedure by the name of PROC1 that accepts two varchar strings as parameters.
+ Your procedure should then determine if the first varchar string exists inside the varchar string. 
+For example, if string1 = ‘DAC’ and string2 = ‘CDAC, then string1 exists inside string2.
+  The stored procedure should insert the appropriate message into a suitable TEMPP output table. 
+Calling program for the stored procedure need not be written.
+
+
+	-- que1
+
+create table temp1(ename varchar(20));
+insert into temp1 values('DAC'),('CDAC');
+
+create table ano(res varchar(20));
+
+delimiter //
+create procedure Proc1()
+begin
+	declare  res varchar(10);
+    set res=(select * from temp1 where ename like '%DAC%');
+	 
+     if res='found' then
+		insert into ano values('found');
+     else
+		 insert into ano values('Not found');
+end; //
+delimiter ;
+ call Proc1();
+drop procedure Proc1;
+
+select res from ano;
+
+
+
+-- question2
+
+create table temp2(fir varchar(20));
+delimiter //
+create function FUNC1(x float,y float,z float)
+returns boolean
+deterministic
+begin
+	if (x+y) > z and (y+z) > x and (x+z) > y then
+		return TRUE;
+	else
+		return FALSE;
+	end if;
+end; //
+delimiter ;
+
+delimiter //
+create procedure triangle()
+begin
+    declare a boolean default false;
+    set a = FUNC1(10,20,30);
+    if a = true then
+		insert into temp2 values('valid triangle');
+	else
+       insert into temp2 values('invalid triangle');
+	end if;
+end; //
+delimiter ;
+drop table temp2;
+drop procedure triangle;
+call triangle();
+
+select * from temp2;
